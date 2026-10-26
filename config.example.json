@@ -1,0 +1,25 @@
+{
+  "_comment": "Agent Relay Protocol 配置。复制到 ~/.agent-relay/config.json 并填入你自己的值。所有字段仅本机保存，禁止提交任何真实值到公开仓库。",
+  "machine": "machine-a",
+  "_machine_comment": "本机短名，用于群内点名路由（→ @machine-name）。用不含个人信息的代称。",
+  "agent_name": "my-agent",
+  "_agent_comment": "本机代表软件名；消息前缀为【machine-agent_name】。",
+  "chat_id": "oc_replace_with_your_group_chat_id",
+  "chat_domain": "feishu",
+  "_chat_comment": "chat_domain 标记当前 IM 适配实现（目前仅 feishu）。",
+  "poll_limit": 50,
+  "authorizer_open_id": "ou_replace_with_your_open_id",
+  "_authorizer_comment": "唯一授权者身份，只有该用户的回复可构成对 #编号 的确认。",
+  "memory_base_token": "",
+  "memory_table_id": "",
+  "_memory_comment": "可选：共享记忆表（多维表格）。留空表示不启用共享记忆层。",
+  "im_cli": "lark-cli",
+  "_im_cli_comment": "IM 命令行工具名；当前实现基于官方 lark-cli，换 IM 时需同步适配 poll 脚本。",
+  "busy_check": {
+    "type": "none",
+    "_types": "none=不检测 | zcode_turn_usage=检测本机 coding-agent 会话回合库 | command=自定义命令(returncode 0 视为忙碌)",
+    "db_path": "~/.zcode/cli/db/db.sqlite",
+    "cmd": ""
+  },
+  "_busy_comment": "值守让位检测：忙碌窗口内值守静默，把机器让给交互会话。"
+}

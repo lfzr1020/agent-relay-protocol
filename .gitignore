@@ -1,0 +1,17 @@
+# private config — never commit
+config.json
+
+# local data produced at runtime
+logs/
+*.log
+inbox.jsonl
+poll_latest.json
+poll_state.json
+guard_state.json
+api_usage.json
+
+# editor / tooling state
+.mimosa/
+.zcode/
+Thumbs.db
+Desktop.ini
