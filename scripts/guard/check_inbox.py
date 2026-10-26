@@ -11,18 +11,19 @@ Busy check: only run as the FIRST step of a watch cycle (this cycle's own turn i
 yet recorded, and the previous watch cycle was hours ago), so a recent record means an
 interactive session is active on this machine -> print BUSY and stay silent.
 
-Reads machine/agent identity from ~/.agent-relay/config.json (or $RELAY_CONFIG).
+Reads machine/agent identity from the fixed local config ~/.agent-relay/config.json.
 """
 import json
 import os
 import sqlite3
-import subprocess
 import sys
 import time
 from pathlib import Path
 
 RELAY_DIR = Path.home() / ".agent-relay"
-CONFIG = Path(os.environ.get("RELAY_CONFIG", RELAY_DIR / "config.json"))
+# Trusted local config at a fixed path (see docs/threat-model.md); no env/argument
+# redirect on purpose, so the config location cannot be steered from outside.
+CONFIG = RELAY_DIR / "config.json"
 INBOX = RELAY_DIR / "inbox.jsonl"
 STATE = RELAY_DIR / "guard_state.json"
 MAX_KEEP = 500
@@ -56,13 +57,6 @@ def is_busy(cfg, window_min):
             if not row or row[0] is None:
                 return False
             return (time.time() * 1000 - row[0]) < window_min * 60 * 1000
-        except Exception:
-            return True
-    if btype == "command":
-        # generic extension point: exit code 0 from the command means busy
-        try:
-            r = subprocess.run(bc.get("cmd", ""), shell=True, capture_output=True, timeout=10)
-            return r.returncode == 0
         except Exception:
             return True
     return False

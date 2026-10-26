@@ -11,7 +11,6 @@ const path = require('path');
 const os = require('os');
 
 const RELAY_DIR = path.join(os.homedir(), '.agent-relay');
-const CONFIG_PATH = process.env.RELAY_CONFIG || path.join(RELAY_DIR, 'config.json');
 const LATEST = path.join(RELAY_DIR, 'poll_latest.json');
 const STATE = path.join(RELAY_DIR, 'poll_state.json');
 const INBOX = path.join(RELAY_DIR, 'inbox.jsonl');
@@ -19,12 +18,16 @@ const USAGE = path.join(RELAY_DIR, 'api_usage.json');
 
 function readJson(f, d) { try { return JSON.parse(fs.readFileSync(f, 'utf8')); } catch (e) { return d; } }
 
-const cfg = readJson(CONFIG_PATH, null);
+// Config is a trusted local file at a fixed path (only the local user can write it;
+// see docs/threat-model.md). Fixed constant on purpose: no env/argument can redirect it.
+const CONFIG_PATH_RESOLVED = path.join(RELAY_DIR, 'config.json');
+
+const cfg = readJson(CONFIG_PATH_RESOLVED, null);
 
 // --print mode: side-effect-free config field dump (no usage counting, no state touching)
 if (process.argv[2] === '--print') {
   const field = process.argv[3];
-  if (!cfg) { console.error('[relay] config not found: ' + CONFIG_PATH); process.exit(1); }
+  if (!cfg) { console.error('[relay] config not found: ' + CONFIG_PATH_RESOLVED); process.exit(1); }
   const v = cfg[field];
   if (v === undefined || v === '') { console.error('[relay] config field empty: ' + field); process.exit(1); }
   console.log(v);
@@ -32,7 +35,7 @@ if (process.argv[2] === '--print') {
 }
 
 if (!cfg || !cfg.machine) {
-  console.error('[relay] config missing or no "machine" field: ' + CONFIG_PATH + ' (see config.example.json)');
+  console.error('[relay] config missing or no "machine" field: ' + CONFIG_PATH_RESOLVED + ' (see config.example.json)');
   process.exit(0); // unattended scheduled task: log and exit cleanly instead of crashing
 }
 const MY_MACHINE = cfg.machine;
