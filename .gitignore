@@ -15,3 +15,7 @@ api_usage.json
 .zcode/
 Thumbs.db
 Desktop.ini
+
+# python bytecode cache
+__pycache__/
+*.pyc
